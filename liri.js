@@ -19,29 +19,37 @@ let spotify = new Spotify({
 let songChoice=" "; 
 
 //this accesses the request to "my omdbKeys"
-let request = require('request');
-request(`http://www.omdbapi.com/?apikey=${keys.omdbKeys.id}&`, function (error, response, body) {
+const request = require('request');
+// request(`http://www.omdbapi.com/?apikey=${keys.omdbKeys.id}&`, function (error, response, body) {
 
-// displays an error if one occurred
-console.log('error:', error); 
+// // displays an error if one occurred
+// console.log('error:', error); 
 
-// displays the response status code if a response was received
-  console.log('statusCode:', response && response.statusCode);
+// // displays the response status code if a response was received
+//   console.log('statusCode:', response && response.statusCode);
 
-// displays the details for the body if there is one
-  console.log('body:', body); 
-});
+// // displays the details for the body if there is one
+//   console.log('body:', body); 
+// });
 
 //the variable used to search for movies on omdb
 let movieChoice=" ";
 
-//this accesses the request to my bandsintownKeys
-//let bandsintownKeys= new bandsintown({
-  //id: key.bandsintownKeys.id,
-//});
+//this accesses the request to my "bandsintownKeys"
+// request(`https://rest.bandsintown.com/artists/events?app_id=${keys.bandsintownKeys.id}`, function (error, response, body){
+
+// // displays an error if one occurred
+// console.log('error', error);
+
+// // displays the response status code if a response was received
+//   console.log('statusCode:', response && response.statusCode);
+
+// // displays the details for the body if there is one
+// console.log('body', body);
+// }); 
 
 // the variable used to search for movies on bandsintown
-//let concertChoice="";
+let concertChoice="";
 
 //brings in the fs library?
 let fs = require("fs");
@@ -79,10 +87,10 @@ else if (userCommand === "movie-this"){
 }
 
 //bandsintown call for user input
-//else if (userCommand === "concert-this"){
-  //concertCheck();
-  //concertCall(concertChoice);
-//}
+else if (userCommand === "concert-this"){
+  concertCheck();
+  concertCall(concertChoice);
+}
 
 //do-what-it-says call for user input
 else if (userCommand === "do-what-it-says"){
@@ -154,8 +162,8 @@ function movieCall(movieChoice) {
 	//variable to hold the omdb url search with api key and omdb request
 	let omdbMovie = `http://www.omdbapi.com/?apikey=${keys.omdbKeys.id}&t=` + movieChoice;
 
-	
-	request(omdbMovie, function (error, response, body) {
+	// requests the info and formats it for the terminal
+	request (omdbMovie, function (error, response, body) {
 		if (error) {
 			return console.log(error);
 		}
@@ -173,6 +181,35 @@ function movieCall(movieChoice) {
 	});
 
 };
+
+function concertCheck() {
+
+  if (!process.argv[3]) {
+    concertChoice = " ";
+  }
+  else {
+    for (c= 3; c < process.argv.length; c++) {
+      concertChoice += process.argv[c]; 
+    }
+  }
+};
+
+function concertCall(concertChoice) {
+  console.log(concertChoice);
+  let bandsintownEvent = `https://rest.bandsintown.com/artists/${concertChoice}/events?app_id=${keys.bandsintownKeys.id}`;
+
+request(bandsintownEvent, function (error, response, body) {
+  if (error) {
+    return console.log(error);
+  }
+  let data = JSON.parse(body);
+
+  console.log(data);
+  //console.log("Venue location " + data.venueCity);
+  //console.log("Date of Event " +  data.datetime);
+});
+};
+
 
 
 
